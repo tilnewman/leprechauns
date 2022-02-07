@@ -1,20 +1,13 @@
-#include <SFML/Graphics.hpp>
+#include <stddef.h>
+
+#include "sim-coordinator.hpp"
 
 int main()
 {
-    sf::Window window(sf::VideoMode(800, 800), "SFML");
+    using namespace leprechauns;
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-        }
-    }
+    SimCoordinator sim(true);
+    sim.run();
 
-    return 0;
+    return EXIT_SUCCESS;
 }
