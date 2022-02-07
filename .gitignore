@@ -36,6 +36,7 @@
 **/Release
 **/Debug
 **/.vscode
+**/.vs
 *.DS_Store
 *.oa
 *.ncb
@@ -44,3 +45,6 @@
 *.vap
 *.dbp
 *.ilk
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
