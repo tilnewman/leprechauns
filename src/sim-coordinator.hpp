@@ -1,7 +1,7 @@
 #ifndef LEPRECHAUNS_SIMCOORDINATOR_HPP
 #define LEPRECHAUNS_SIMCOORDINATOR_HPP
 
-#include <SFML/Window.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 namespace leprechauns
 {
@@ -18,8 +18,8 @@ namespace leprechauns
         void displayLoop();
 
       private:
-        sf::Window window_;
-        bool willDisplay_;
+        sf::RenderWindow m_window;
+        bool m_willDisplay;
     };
 
 } // namespace leprechauns
