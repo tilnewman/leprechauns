@@ -17,9 +17,13 @@ namespace leprechauns
         void loop();
         void displayLoop();
 
+        void setupDisplayVerts();
+
       private:
-        sf::RenderWindow m_window;
         bool m_willDisplay;
+        sf::RenderWindow m_window;
+        std::vector<sf::Vertex> m_cellsQuad;
+        std::vector<sf::Vertex> m_gridLines;
     };
 
 } // namespace leprechauns
