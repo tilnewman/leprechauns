@@ -1,6 +1,8 @@
 #ifndef LEPRECHAUNS_DRAWING_HPP
 #define LEPRECHAUNS_DRAWING_HPP
 
+#include "cell.hpp"
+
 #include <SFML/Graphics.hpp>
 
 #include <vector>
@@ -13,8 +15,11 @@ namespace leprechauns
       public:
         Drawing();
 
-        void draw(sf::RenderWindow & window);
+        void draw(sf::RenderWindow & window, const Board_t & board);
         void setup(sf::RenderWindow & window);
+        int cellCount() const { return m_cellCount; }
+        const sf::Vector2f cellSize() const { return { m_cellLength, m_cellLength }; }
+        const sf::Vector2f cellWindowPosition(const Position_t & pos) const;
 
       private:
         sf::Color m_backgroundColor;

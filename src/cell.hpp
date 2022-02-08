@@ -1,0 +1,67 @@
+#ifndef LEPRECHAUNS_CELL_HPP
+#define LEPRECHAUNS_CELL_HPP
+
+#include "flat-map.hpp"
+
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
+
+#include <string>
+
+namespace leprechauns
+{
+
+    enum Content
+    {
+        Lazy = -2,
+        Greedy = -1,
+        Empty = 0,
+        Gold = 1
+    };
+
+    inline const std::string cellToString(const int value)
+    {
+        if (Content::Lazy == value)
+        {
+            return "Lazy";
+        }
+        else if (Content::Greedy == value)
+        {
+            return "Greedy";
+        }
+        else if (Content::Empty == value)
+        {
+            return "Empty";
+        }
+        else
+        {
+            return std::to_string(value) + "Gold";
+        }
+    }
+
+    inline const sf::Color cellToColor(const int value)
+    {
+        if (Content::Lazy == value)
+        {
+            return sf::Color::Blue;
+        }
+        else if (Content::Greedy == value)
+        {
+            return sf::Color::Green;
+        }
+        else if (Content::Empty == value)
+        {
+            return sf::Color::Transparent;
+        }
+        else
+        {
+            return sf::Color::Yellow;
+        }
+    }
+
+    using Position_t = sf::Vector2i;
+    using Board_t = util::FlatMap<Position_t, int>;
+
+} // namespace leprechauns
+
+#endif // LEPRECHAUNS_CELL_HPP

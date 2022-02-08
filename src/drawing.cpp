@@ -14,18 +14,28 @@ namespace leprechauns
         , m_boxPad(0.0f)
         , m_boxLength(0.0f)
         , m_boxRect()
-        , m_cellCount(0)
+        , m_cellCount(20)
         , m_cellLength(0.0f)
         , m_cellsQuad()
         , m_gridLines()
     {}
 
-    void Drawing::draw(sf::RenderWindow & window)
+    void Drawing::draw(sf::RenderWindow & window, const Board_t & board)
     {
         window.clear(m_backgroundColor);
 
         window.draw(&m_cellsQuad[0], m_cellsQuad.size(), sf::PrimitiveType::Quads);
         window.draw(&m_gridLines[0], m_gridLines.size(), sf::PrimitiveType::Lines);
+
+        for (const auto & pair : board)
+        {
+            if (Content::Empty != pair.second)
+            {
+                const sf::Vector2f windowPosition = cellWindowPosition(pair.first);
+                const sf::Color color = cellToColor(pair.second);
+                util::drawRectangleShape(window, { windowPosition, cellSize() }, true, color);
+            }
+        }
 
         window.display();
     }
@@ -41,7 +51,6 @@ namespace leprechauns
         m_boxRect.width = m_boxLength;
         m_boxRect.height = m_boxLength;
 
-        m_cellCount = 20;
         m_cellLength = (m_boxLength / static_cast<float>(m_cellCount));
 
         //
@@ -81,6 +90,12 @@ namespace leprechauns
             const sf::Vertex vertD{ { vertDLeft, vertDTop }, m_gridColor };
             m_gridLines.push_back(vertD);
         }
+    }
+
+    const sf::Vector2f Drawing::cellWindowPosition(const Position_t & pos) const
+    {
+        return { m_boxRect.left + (static_cast<float>(pos.x) * m_cellLength),
+                 m_boxRect.top + (static_cast<float>(pos.y) * m_cellLength) };
     }
 
 } // namespace leprechauns

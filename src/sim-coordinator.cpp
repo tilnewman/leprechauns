@@ -14,6 +14,8 @@ namespace leprechauns
 
     void SimCoordinator::run(const bool willDisplay)
     {
+        setupBoard();
+
         if (willDisplay)
         {
             m_window.create(sf::VideoMode::getDesktopMode(), "Leprechauns", sf::Style::Fullscreen);
@@ -53,7 +55,18 @@ namespace leprechauns
                 }
             }
 
-            m_drawing.draw(m_window);
+            m_drawing.draw(m_window, m_boardMap);
+        }
+    }
+
+    void SimCoordinator::setupBoard()
+    {
+        for (int y = 0; y < m_drawing.cellCount(); ++y)
+        {
+            for (int x = 0; x < m_drawing.cellCount(); ++x)
+            {
+                m_boardMap.append(sf::Vector2i{ x, y }, Content::Empty);
+            }
         }
     }
 
