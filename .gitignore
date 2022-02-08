@@ -37,6 +37,7 @@
 **/Debug
 **/.vscode
 **/.vs
+**/CPTCMakeBuild
 *.DS_Store
 *.oa
 *.ncb
