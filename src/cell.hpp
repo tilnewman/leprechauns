@@ -47,7 +47,7 @@ namespace leprechauns
         }
         else if (Content::Greedy == value)
         {
-            return sf::Color::Green;
+            return sf::Color::Magenta;
         }
         else if (Content::Empty == value)
         {
@@ -61,6 +61,8 @@ namespace leprechauns
 
     using Position_t = sf::Vector2i;
     using Board_t = util::FlatMap<Position_t, int>;
+
+    const Position_t InvalidPosition = { -1, -1 };
 
 } // namespace leprechauns
 

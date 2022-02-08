@@ -3,6 +3,7 @@
 
 #include "cell.hpp"
 #include "drawing.hpp"
+#include "random.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -19,9 +20,12 @@ namespace leprechauns
       private:
         void loop();
         void displayLoop();
-        void setupBoard();
+        void resetBoard();
+        void placeGoldRandom();
+        const Position_t findRandomEmptyPosition() const;
 
       private:
+        util::Random m_random;
         sf::RenderWindow m_window;
         Drawing m_drawing;
         Board_t m_boardMap;
