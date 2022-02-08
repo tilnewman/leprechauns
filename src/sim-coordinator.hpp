@@ -1,6 +1,8 @@
 #ifndef LEPRECHAUNS_SIMCOORDINATOR_HPP
 #define LEPRECHAUNS_SIMCOORDINATOR_HPP
 
+#include "drawing.hpp"
+
 #include <SFML/Graphics/RenderWindow.hpp>
 
 namespace leprechauns
@@ -17,13 +19,10 @@ namespace leprechauns
         void loop();
         void displayLoop();
 
-        void setupDisplayVerts();
-
       private:
         bool m_willDisplay;
         sf::RenderWindow m_window;
-        std::vector<sf::Vertex> m_cellsQuad;
-        std::vector<sf::Vertex> m_gridLines;
+        Drawing m_drawing;
     };
 
 } // namespace leprechauns
