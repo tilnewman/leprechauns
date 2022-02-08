@@ -11,16 +11,15 @@ namespace leprechauns
     class SimCoordinator
     {
       public:
-        SimCoordinator(const bool willDisplay);
+        SimCoordinator();
 
-        void run();
+        void run(const bool willDisplay);
 
       private:
         void loop();
         void displayLoop();
 
       private:
-        bool m_willDisplay;
         sf::RenderWindow m_window;
         Drawing m_drawing;
     };

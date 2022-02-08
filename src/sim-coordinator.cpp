@@ -2,23 +2,19 @@
 
 #include "check-macros.hpp"
 
-#include <SFML/Graphics.hpp>
-
 #include <iostream>
-#include <vector>
 
 namespace leprechauns
 {
 
-    SimCoordinator::SimCoordinator(const bool willDisplay)
-        : m_willDisplay(willDisplay)
-        , m_window()
+    SimCoordinator::SimCoordinator()
+        : m_window()
         , m_drawing()
     {}
 
-    void SimCoordinator::run()
+    void SimCoordinator::run(const bool willDisplay)
     {
-        if (m_willDisplay)
+        if (willDisplay)
         {
             m_window.create(sf::VideoMode::getDesktopMode(), "Leprechauns", sf::Style::Fullscreen);
             M_CHECK(m_window.isOpen(), "Failed to open video window.");

@@ -6,8 +6,8 @@ int main()
 {
     using namespace leprechauns;
 
-    SimCoordinator sim(true);
-    sim.run();
+    SimCoordinator sim;
+    sim.run(true);
 
     return EXIT_SUCCESS;
 }
