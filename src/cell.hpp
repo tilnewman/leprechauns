@@ -55,7 +55,7 @@ namespace leprechauns
         }
         else
         {
-            return sf::Color(200, 200, 0);
+            return sf::Color::Yellow;
         }
     }
 

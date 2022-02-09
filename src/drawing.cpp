@@ -9,7 +9,7 @@ namespace leprechauns
     Drawing::Drawing()
         : m_backgroundColor(sf::Color(28, 28, 28))
         , m_cellColor(sf::Color::Black)
-        , m_gridColor(sf::Color(150, 150, 150))
+        , m_gridColor(sf::Color(50, 50, 50))
         , m_windowSize(0.0f, 0.0f)
         , m_boxPad(0.0f)
         , m_boxLength(0.0f)
@@ -56,9 +56,9 @@ namespace leprechauns
                     const float goldRatio{ static_cast<float>(pair.second) /
                                            static_cast<float>(99) };
 
-                    const float goldColorValue{ goldRatio * 234.0f };
+                    const float goldColorValue{ goldRatio * 240.0f };
 
-                    color.a = 30 + static_cast<unsigned char>(goldColorValue);
+                    color.a = 15 + static_cast<unsigned char>(goldColorValue);
                 }
 
                 sf::FloatRect cellRect{ windowPosition, cellSize() };
