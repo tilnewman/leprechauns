@@ -20,7 +20,11 @@ namespace leprechauns
         , m_gridLines()
     {}
 
-    void Drawing::draw(sf::RenderWindow & window, const Board_t & board)
+    void Drawing::draw(
+        sf::RenderWindow & window,
+        const Board_t & board,
+        const int lazyScore,
+        const int greedyScore)
     {
         window.clear(m_backgroundColor);
 
@@ -33,9 +37,32 @@ namespace leprechauns
             {
                 const sf::Vector2f windowPosition = cellWindowPosition(pair.first);
                 const sf::Color color = cellToColor(pair.second);
-                util::drawRectangleShape(window, { windowPosition, cellSize() }, true, color);
+
+                sf::FloatRect cellRect{ windowPosition, cellSize() };
+                util::scaleRectInPlace(cellRect, 0.85f);
+
+                util::drawRectangleShape(window, cellRect, true, color);
             }
         }
+
+        const float scoreRectWidth = (m_cellLength * 0.3f);
+
+        sf::FloatRect lazyScoreRect{ m_boxRect.left - (scoreRectWidth * 2.0f),
+                                     m_boxRect.top,
+                                     scoreRectWidth,
+                                     m_boxRect.height };
+
+        util::scaleRectInPlace(lazyScoreRect, { 0.7f, 1.0f });
+
+        util::drawRectangleShape(window, lazyScoreRect, true, cellToColor(Content::Lazy));
+
+        sf::FloatRect greedyScoreRect{
+            lazyScoreRect.left - scoreRectWidth, m_boxRect.top, scoreRectWidth, m_boxRect.height
+        };
+
+        util::scaleRectInPlace(greedyScoreRect, { 0.7f, 1.0f });
+
+        util::drawRectangleShape(window, greedyScoreRect, true, cellToColor(Content::Greedy));
 
         window.display();
     }

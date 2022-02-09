@@ -15,7 +15,12 @@ namespace leprechauns
       public:
         Drawing();
 
-        void draw(sf::RenderWindow & window, const Board_t & board);
+        void draw(
+            sf::RenderWindow & window,
+            const Board_t & board,
+            const int lazyScore,
+            const int greedyScore);
+
         void setup(sf::RenderWindow & window);
         int cellCount() const { return m_cellCount; }
         const sf::Vector2f cellSize() const { return { m_cellLength, m_cellLength }; }

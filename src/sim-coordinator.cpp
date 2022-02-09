@@ -20,6 +20,7 @@ namespace leprechauns
         , m_clock()
         , m_findRandEmptyPositionsVec()
         , m_selectPossibleMovesVec()
+        , m_milliSecondSleep(250)
     {
         m_selectPossibleMovesVec.reserve(4);
     }
@@ -34,7 +35,7 @@ namespace leprechauns
             M_CHECK(m_window.isOpen(), "Failed to open video window.");
 
             const sf::Vector2u windowSize = m_window.getSize();
-            M_LOG("Display Resolution: " << windowSize.x << 'x' << windowSize.y);
+            std::cout << "Display Resolution: " << windowSize.x << 'x' << windowSize.y << std::endl;
 
             m_window.setFramerateLimit(0);
 
@@ -45,7 +46,7 @@ namespace leprechauns
         }
         else
         {
-            M_LOG("Running without displpay.");
+            std::cout << "Running without displpay." << std::endl;
             m_clock.restart();
             loop();
         }
@@ -106,15 +107,42 @@ namespace leprechauns
                 }
                 else if (event.type == sf::Event::KeyPressed)
                 {
-                    m_window.close();
+                    if (event.key.code == sf::Keyboard::Up)
+                    {
+                        m_milliSecondSleep -= 5;
+
+                        m_milliSecondSleep -=
+                            static_cast<int>(static_cast<float>(m_milliSecondSleep) * 0.05f);
+
+                        if (m_milliSecondSleep < 0)
+                        {
+                            m_milliSecondSleep = 0;
+                        }
+                    }
+                    else if (event.key.code == sf::Keyboard::Down)
+                    {
+                        m_milliSecondSleep += 5;
+
+                        m_milliSecondSleep +=
+                            static_cast<int>(static_cast<float>(m_milliSecondSleep) * 0.05f);
+
+                        if (m_milliSecondSleep > 500)
+                        {
+                            m_milliSecondSleep = 500;
+                        }
+                    }
+                    else
+                    {
+                        m_window.close();
+                    }
                 }
             }
 
             moveLeprechauns();
 
-            m_drawing.draw(m_window, m_boardMap);
+            m_drawing.draw(m_window, m_boardMap, m_lazyScore, m_greedyScore);
 
-            // sf::sleep(sf::milliseconds(150));
+            sf::sleep(sf::milliseconds(m_milliSecondSleep));
         }
     }
 

@@ -7,7 +7,7 @@ int main()
     using namespace leprechauns;
 
     SimCoordinator sim;
-    sim.run(false);
+    sim.run(true);
 
     return EXIT_SUCCESS;
 }

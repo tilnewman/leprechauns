@@ -43,7 +43,7 @@ namespace leprechauns
     {
         if (Content::Lazy == value)
         {
-            return sf::Color::Blue;
+            return sf::Color(50, 50, 255);
         }
         else if (Content::Greedy == value)
         {

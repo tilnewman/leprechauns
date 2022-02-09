@@ -52,6 +52,7 @@ namespace leprechauns
         int m_greedyScore;
         int m_turnCounter;
         sf::Clock m_clock;
+        int m_milliSecondSleep;
 
         // buffer used by findRandomEmptyPosition() placed here for speed
         mutable std::vector<Position_t> m_findRandEmptyPositionsVec;
