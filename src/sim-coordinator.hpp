@@ -18,9 +18,11 @@ namespace leprechauns
         void run(const bool willDisplay);
 
       private:
+        void printFinalScores();
         void loop();
         void displayLoop();
         void resetBoard();
+        void placeGoldRandom();
 
         void moveLeprechauns();
         void moveLazy();
@@ -30,10 +32,14 @@ namespace leprechauns
         bool isPositionOnBoard(const Position_t & position) const;
         bool isPositionValidToMoveOn(const Position_t & position) const;
         const Position_t findRandomEmptyPosition() const;
-        void placeGoldRandom();
 
-        void setupPossibleMovePositions(
+        void setupAllPossibleMovePositions(
             const Position_t from, std::vector<Position_t> & positions) const;
+
+        void appendMovesToward(
+            const Position_t from, const Position_t to, std::vector<Position_t> & positions) const;
+
+        const Position_t selectPossibleMove(const Position_t from, const Position_t to) const;
 
       private:
         util::Random m_random;
@@ -44,6 +50,7 @@ namespace leprechauns
         const int m_goldCount;
         int m_lazyScore;
         int m_greedyScore;
+        int m_turnCounter;
     };
 
 } // namespace leprechauns

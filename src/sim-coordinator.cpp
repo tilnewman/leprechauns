@@ -16,6 +16,7 @@ namespace leprechauns
         , m_goldCount(10)     // always this many pots of gold on the board
         , m_lazyScore(0)
         , m_greedyScore(0)
+        , m_turnCounter(0)
     {}
 
     void SimCoordinator::run(const bool willDisplay)
@@ -39,6 +40,35 @@ namespace leprechauns
         {
             M_LOG("Running without displpay.");
             loop();
+        }
+
+        printFinalScores();
+    }
+
+    void SimCoordinator::printFinalScores()
+    {
+        std::cout << "After " << m_turnCounter << " turns..." << std::endl;
+        std::cout << "\tLazy Score:  " << m_lazyScore << std::endl;
+        std::cout << "\tGreedy Score:" << m_greedyScore << std::endl;
+
+        if (m_lazyScore == m_greedyScore)
+        {
+            std::cout << "\tTied for first place!" << std::endl;
+        }
+        else
+        {
+            if (m_lazyScore > m_greedyScore)
+            {
+                std::cout << "\tLazy wins by "
+                          << util::makePercentString((m_lazyScore - m_greedyScore), m_lazyScore)
+                          << std::endl;
+            }
+            else
+            {
+                std::cout << "\tGreedy wins by "
+                          << util::makePercentString((m_greedyScore - m_lazyScore), m_greedyScore)
+                          << std::endl;
+            }
         }
     }
 
@@ -72,7 +102,7 @@ namespace leprechauns
 
             m_drawing.draw(m_window, m_boardMap);
 
-            // sf::sleep(sf::milliseconds(10));
+            // sf::sleep(sf::milliseconds(150));
         }
     }
 
@@ -106,6 +136,19 @@ namespace leprechauns
         }
     }
 
+    void SimCoordinator::placeGoldRandom()
+    {
+        const Position_t position = findRandomEmptyPosition();
+
+        if (InvalidPosition == position)
+        {
+            M_LOG("Unable to place random gold because the board is full!");
+            return;
+        }
+
+        m_boardMap.at(position) = m_random.fromTo<int>(1, 99);
+    }
+
     void SimCoordinator::moveLeprechauns()
     {
         if (m_isLazyTurn)
@@ -118,9 +161,50 @@ namespace leprechauns
         }
 
         m_isLazyTurn = !m_isLazyTurn;
+
+        ++m_turnCounter;
     }
 
-    void SimCoordinator::moveLazy() {}
+    void SimCoordinator::moveLazy()
+    {
+        // find where lazy is
+        Position_t fromPosition = InvalidPosition;
+
+        for (const auto & pair : m_boardMap)
+        {
+            if (Content::Lazy == pair.second)
+            {
+                fromPosition = pair.first;
+                break;
+            }
+        }
+
+        M_CHECK((InvalidPosition != fromPosition), "Error:  Can't find Lazy on the board!");
+
+        // find closest pot of gold
+        int closestGoldDistance = (m_drawing.cellCount() * m_drawing.cellCount());
+        Position_t closestGoldPosition = InvalidPosition;
+
+        for (const auto & pair : m_boardMap)
+        {
+            if (pair.second > 0)
+            {
+                const int distance =
+                    (std::abs(fromPosition.x - pair.first.x) +
+                     std::abs(fromPosition.y - pair.first.y));
+
+                if (distance < closestGoldDistance)
+                {
+                    closestGoldDistance = distance;
+                    closestGoldPosition = pair.first;
+                }
+            }
+        }
+
+        M_CHECK((InvalidPosition != closestGoldPosition), "Could not move Greedy because no gold!");
+
+        moveLeprechaun(fromPosition, selectPossibleMove(fromPosition, closestGoldPosition));
+    }
 
     void SimCoordinator::moveGreedy()
     {
@@ -152,41 +236,7 @@ namespace leprechauns
             "ERROR:  Can't move Greedy because there "
             "is no gold on the board!");
 
-        // find positions to move toward that are in the directions needed
-        std::vector<Position_t> possibleMoves;
-
-        // clang-format off
-        const Position_t left { fromPosition.x - 1, fromPosition.y };
-        const Position_t right{ fromPosition.x + 1, fromPosition.y };
-        const Position_t up   { fromPosition.x,     fromPosition.y - 1 };
-        const Position_t down { fromPosition.x,     fromPosition.y + 1 };
-        // clang-format on
-
-        if ((mostGoldPosition.x < fromPosition.x) && isPositionValidToMoveOn(left))
-        {
-            possibleMoves.push_back(left);
-        }
-        else if ((mostGoldPosition.x > fromPosition.x) && isPositionValidToMoveOn(right))
-        {
-            possibleMoves.push_back(right);
-        }
-
-        if ((mostGoldPosition.y < fromPosition.y) && isPositionValidToMoveOn(up))
-        {
-            possibleMoves.push_back(up);
-        }
-        else if ((mostGoldPosition.y > fromPosition.y) && isPositionValidToMoveOn(down))
-        {
-            possibleMoves.push_back(down);
-        }
-
-        // if can't move in direction desired then move in random other direction
-        if (possibleMoves.empty())
-        {
-            setupPossibleMovePositions(fromPosition, possibleMoves);
-        }
-
-        moveLeprechaun(fromPosition, m_random.from(possibleMoves));
+        moveLeprechaun(fromPosition, selectPossibleMove(fromPosition, mostGoldPosition));
     }
 
     void SimCoordinator::moveLeprechaun(const Position_t from, const Position_t to)
@@ -252,20 +302,7 @@ namespace leprechauns
         }
     }
 
-    void SimCoordinator::placeGoldRandom()
-    {
-        const Position_t position = findRandomEmptyPosition();
-
-        if (InvalidPosition == position)
-        {
-            M_LOG("Unable to place random gold because the board is full!");
-            return;
-        }
-
-        m_boardMap.at(position) = m_random.fromTo<int>(1, 99);
-    }
-
-    void SimCoordinator::setupPossibleMovePositions(
+    void SimCoordinator::setupAllPossibleMovePositions(
         const Position_t from, std::vector<Position_t> & positions) const
     {
         positions.clear();
@@ -283,6 +320,51 @@ namespace leprechauns
         // clang-format on
 
         M_CHECK((!positions.empty()), "ERROR:  There are no valid move positions on the board!");
+    }
+
+    void SimCoordinator::appendMovesToward(
+        const Position_t from, const Position_t to, std::vector<Position_t> & positions) const
+    {
+        // clang-format off
+        const Position_t left { from.x - 1, from.y };
+        const Position_t right{ from.x + 1, from.y };
+        const Position_t up   { from.x,     from.y - 1 };
+        const Position_t down { from.x,     from.y + 1 };
+        // clang-format on
+
+        if ((to.x < from.x) && isPositionValidToMoveOn(left))
+        {
+            positions.push_back(left);
+        }
+        else if ((to.x > from.x) && isPositionValidToMoveOn(right))
+        {
+            positions.push_back(right);
+        }
+
+        if ((to.y < from.y) && isPositionValidToMoveOn(up))
+        {
+            positions.push_back(up);
+        }
+        else if ((to.y > from.y) && isPositionValidToMoveOn(down))
+        {
+            positions.push_back(down);
+        }
+    }
+
+    const Position_t
+        SimCoordinator::selectPossibleMove(const Position_t from, const Position_t to) const
+    {
+        // find moves toward closest pot of gold
+        std::vector<Position_t> possibleMoves;
+        appendMovesToward(from, to, possibleMoves);
+
+        // if can't move in direction desired then move in random other direction
+        if (possibleMoves.empty())
+        {
+            setupAllPossibleMovePositions(from, possibleMoves);
+        }
+
+        return m_random.from(possibleMoves);
     }
 
 } // namespace leprechauns
