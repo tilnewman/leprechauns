@@ -13,7 +13,7 @@ namespace leprechauns
         , m_window()
         , m_drawing()
         , m_isLazyTurn(false)
-        , m_goldCount(10)
+        , m_goldCount(3)
         , m_lazyScore(0)
         , m_greedyScore(0)
         , m_turnCounter(0)
@@ -42,7 +42,7 @@ namespace leprechauns
         }
         else
         {
-            std::cout << "Running without displpay." << std::endl;
+            std::cout << "Running without displpay..." << std::endl;
             m_clock.restart();
             loop();
         }

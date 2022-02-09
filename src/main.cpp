@@ -8,7 +8,11 @@ int main()
 
     SimCoordinator sim;
     sim.run(true);
-    sim.run(false);
+
+    while (true)
+    {
+        sim.run(false);
+    }
 
     return EXIT_SUCCESS;
 }
