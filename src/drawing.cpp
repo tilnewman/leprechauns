@@ -72,12 +72,32 @@ namespace leprechauns
     void Drawing::drawScoreBars(
         sf::RenderWindow & window, const int lazyScore, const int greedyScore) const
     {
-        const float scoreRectWidth = (m_cellLength * 0.3f);
+        const float scoreRectWidth = (m_cellLength * 0.333f);
 
         sf::FloatRect lazyScoreRect{ m_boxRect.left - (scoreRectWidth * 2.0f),
                                      m_boxRect.top,
                                      scoreRectWidth,
                                      m_boxRect.height };
+
+        sf::FloatRect greedyScoreRect{
+            lazyScoreRect.left - scoreRectWidth, m_boxRect.top, scoreRectWidth, m_boxRect.height
+        };
+
+        if (lazyScore > greedyScore)
+        {
+            const float ratio{ static_cast<float>(greedyScore) / static_cast<float>(lazyScore) };
+            const float move{ greedyScoreRect.height - (greedyScoreRect.height * ratio) };
+            greedyScoreRect.height *= ratio;
+            greedyScoreRect.top += move;
+        }
+
+        if (greedyScore > lazyScore)
+        {
+            const float ratio{ static_cast<float>(lazyScore) / static_cast<float>(greedyScore) };
+            const float move{ lazyScoreRect.height - (lazyScoreRect.height * ratio) };
+            lazyScoreRect.height *= ratio;
+            lazyScoreRect.top += move;
+        }
 
         util::scaleRectInPlace(lazyScoreRect, { 0.7f, 1.0f });
 
@@ -85,10 +105,6 @@ namespace leprechauns
         {
             util::drawRectangleShape(window, lazyScoreRect, true, cellToColor(Content::Lazy));
         }
-
-        sf::FloatRect greedyScoreRect{
-            lazyScoreRect.left - scoreRectWidth, m_boxRect.top, scoreRectWidth, m_boxRect.height
-        };
 
         util::scaleRectInPlace(greedyScoreRect, { 0.7f, 1.0f });
 
