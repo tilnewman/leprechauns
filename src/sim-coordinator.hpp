@@ -21,7 +21,7 @@ namespace leprechauns
         void printFinalScores();
         void loop();
         void displayLoop();
-        void resetBoard();
+        void reset();
         void placeGoldRandom();
 
         void moveLeprechauns();

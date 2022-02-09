@@ -12,18 +12,18 @@ namespace leprechauns
         : m_random()
         , m_window()
         , m_drawing()
-        , m_isLazyTurn(false) // who moves first is randomized below
-        , m_goldCount(10)     // always this many pots of gold on the board
+        , m_isLazyTurn(false)
+        , m_goldCount(10)
         , m_lazyScore(0)
         , m_greedyScore(0)
         , m_turnCounter(0)
         , m_clock()
-        , m_milliSecondSleep(250)
+        , m_milliSecondSleep(0)
     {}
 
     void SimCoordinator::run(const bool willDisplay)
     {
-        resetBoard();
+        reset();
 
         if (willDisplay)
         {
@@ -83,7 +83,7 @@ namespace leprechauns
 
     void SimCoordinator::loop()
     {
-        for (int i = 0; i < 10000000; ++i)
+        for (int i = 0; i < 1000000; ++i)
         {
             moveLeprechauns();
         }
@@ -142,11 +142,13 @@ namespace leprechauns
         }
     }
 
-    void SimCoordinator::resetBoard()
+    void SimCoordinator::reset()
     {
         m_lazyScore = 0;
         m_greedyScore = 0;
         m_isLazyTurn = m_random.boolean();
+        m_milliSecondSleep = 200;
+        m_turnCounter = 0;
 
         m_boardMap.clear();
 
