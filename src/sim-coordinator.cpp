@@ -18,9 +18,9 @@ namespace leprechauns
         , m_greedyScore(0)
         , m_turnCounter(0)
         , m_clock()
+        , m_milliSecondSleep(250)
         , m_findRandEmptyPositionsVec()
         , m_selectPossibleMovesVec()
-        , m_milliSecondSleep(250)
     {
         m_selectPossibleMovesVec.reserve(4);
     }
