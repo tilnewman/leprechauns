@@ -17,6 +17,7 @@ namespace leprechauns
         , m_lazyScore(0)
         , m_greedyScore(0)
         , m_turnCounter(0)
+        , m_clock()
     {}
 
     void SimCoordinator::run(const bool willDisplay)
@@ -34,11 +35,14 @@ namespace leprechauns
             m_window.setFramerateLimit(0);
 
             m_drawing.setup(m_window);
+
+            m_clock.restart();
             displayLoop();
         }
         else
         {
             M_LOG("Running without displpay.");
+            m_clock.restart();
             loop();
         }
 
@@ -47,7 +51,11 @@ namespace leprechauns
 
     void SimCoordinator::printFinalScores()
     {
-        std::cout << "After " << m_turnCounter << " turns..." << std::endl;
+        const float runTimeSec = m_clock.restart().asSeconds();
+
+        std::cout << "After " << runTimeSec << "sec and " << m_turnCounter << " turns...("
+                  << (static_cast<float>(m_turnCounter) / runTimeSec) << "tps)" << std::endl;
+
         std::cout << "\tLazy Score:  " << m_lazyScore << std::endl;
         std::cout << "\tGreedy Score:" << m_greedyScore << std::endl;
 
@@ -74,7 +82,7 @@ namespace leprechauns
 
     void SimCoordinator::loop()
     {
-        for (int i = 0; i < 1000000; ++i)
+        for (int i = 0; i < 10000000; ++i)
         {
             moveLeprechauns();
         }

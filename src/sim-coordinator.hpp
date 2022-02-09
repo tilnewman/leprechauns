@@ -51,6 +51,7 @@ namespace leprechauns
         int m_lazyScore;
         int m_greedyScore;
         int m_turnCounter;
+        sf::Clock m_clock;
     };
 
 } // namespace leprechauns
