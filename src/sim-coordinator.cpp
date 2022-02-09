@@ -19,11 +19,7 @@ namespace leprechauns
         , m_turnCounter(0)
         , m_clock()
         , m_milliSecondSleep(250)
-        , m_findRandEmptyPositionsVec()
-        , m_selectPossibleMovesVec()
-    {
-        m_selectPossibleMovesVec.reserve(4);
-    }
+    {}
 
     void SimCoordinator::run(const bool willDisplay)
     {
@@ -161,8 +157,6 @@ namespace leprechauns
                 m_boardMap.append(sf::Vector2i{ x, y }, Content::Empty);
             }
         }
-
-        m_findRandEmptyPositionsVec.reserve(m_boardMap.size());
 
         m_boardMap.at(findRandomEmptyPosition()) = Content::Lazy;
         m_boardMap.at(findRandomEmptyPosition()) = Content::Greedy;
@@ -323,23 +317,24 @@ namespace leprechauns
 
     const Position_t SimCoordinator::findRandomEmptyPosition() const
     {
-        m_findRandEmptyPositionsVec.clear();
+        std::vector<Position_t> positions;
+        positions.reserve(m_boardMap.size());
 
         for (const auto & pair : m_boardMap)
         {
             if (Content::Empty == pair.second)
             {
-                m_findRandEmptyPositionsVec.push_back(pair.first);
+                positions.push_back(pair.first);
             }
         }
 
-        if (m_findRandEmptyPositionsVec.empty())
+        if (positions.empty())
         {
             return InvalidPosition;
         }
         else
         {
-            return m_random.from(m_findRandEmptyPositionsVec);
+            return m_random.from(positions);
         }
     }
 
@@ -396,17 +391,18 @@ namespace leprechauns
         SimCoordinator::selectPossibleMove(const Position_t from, const Position_t to) const
     {
         // find moves toward closest pot of gold
-        m_selectPossibleMovesVec.clear();
+        std::vector<Position_t> positions;
+        positions.reserve(4);
 
-        appendMovesToward(from, to, m_selectPossibleMovesVec);
+        appendMovesToward(from, to, positions);
 
         // if can't move in direction desired then move in random other direction
-        if (m_selectPossibleMovesVec.empty())
+        if (positions.empty())
         {
-            setupAllPossibleMovePositions(from, m_selectPossibleMovesVec);
+            setupAllPossibleMovePositions(from, positions);
         }
 
-        return m_random.from(m_selectPossibleMovesVec);
+        return m_random.from(positions);
     }
 
 } // namespace leprechauns
