@@ -47,7 +47,7 @@ namespace leprechauns
         }
         else if (Content::Greedy == value)
         {
-            return sf::Color::Magenta;
+            return sf::Color(200, 0, 200);
         }
         else if (Content::Empty == value)
         {
@@ -55,7 +55,7 @@ namespace leprechauns
         }
         else
         {
-            return sf::Color::Yellow;
+            return sf::Color(200, 200, 0);
         }
     }
 

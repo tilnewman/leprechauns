@@ -24,19 +24,42 @@ namespace leprechauns
         sf::RenderWindow & window,
         const Board_t & board,
         const int lazyScore,
-        const int greedyScore)
+        const int greedyScore) const
     {
         window.clear(m_backgroundColor);
 
+        drawGrid(window);
+        drawPieces(window, board);
+        drawScoreBars(window, lazyScore, greedyScore);
+
+        window.display();
+    }
+
+    void Drawing::drawGrid(sf::RenderWindow & window) const
+    {
         window.draw(&m_cellsQuad[0], m_cellsQuad.size(), sf::PrimitiveType::Quads);
         window.draw(&m_gridLines[0], m_gridLines.size(), sf::PrimitiveType::Lines);
+    }
 
+    void Drawing::drawPieces(sf::RenderWindow & window, const Board_t & board) const
+    {
         for (const auto & pair : board)
         {
             if (Content::Empty != pair.second)
             {
                 const sf::Vector2f windowPosition = cellWindowPosition(pair.first);
-                const sf::Color color = cellToColor(pair.second);
+                sf::Color color = cellToColor(pair.second);
+
+                // if a cell with gold then vary the color alpha with gold amount
+                if (pair.second > 0)
+                {
+                    const float goldRatio{ static_cast<float>(pair.second) /
+                                           static_cast<float>(99) };
+
+                    const float goldColorValue{ goldRatio * 234.0f };
+
+                    color.a = 30 + static_cast<unsigned char>(goldColorValue);
+                }
 
                 sf::FloatRect cellRect{ windowPosition, cellSize() };
                 util::scaleRectInPlace(cellRect, 0.85f);
@@ -44,7 +67,11 @@ namespace leprechauns
                 util::drawRectangleShape(window, cellRect, true, color);
             }
         }
+    }
 
+    void Drawing::drawScoreBars(
+        sf::RenderWindow & window, const int lazyScore, const int greedyScore) const
+    {
         const float scoreRectWidth = (m_cellLength * 0.3f);
 
         sf::FloatRect lazyScoreRect{ m_boxRect.left - (scoreRectWidth * 2.0f),
@@ -54,7 +81,10 @@ namespace leprechauns
 
         util::scaleRectInPlace(lazyScoreRect, { 0.7f, 1.0f });
 
-        util::drawRectangleShape(window, lazyScoreRect, true, cellToColor(Content::Lazy));
+        if (lazyScore > 0)
+        {
+            util::drawRectangleShape(window, lazyScoreRect, true, cellToColor(Content::Lazy));
+        }
 
         sf::FloatRect greedyScoreRect{
             lazyScoreRect.left - scoreRectWidth, m_boxRect.top, scoreRectWidth, m_boxRect.height
@@ -62,9 +92,10 @@ namespace leprechauns
 
         util::scaleRectInPlace(greedyScoreRect, { 0.7f, 1.0f });
 
-        util::drawRectangleShape(window, greedyScoreRect, true, cellToColor(Content::Greedy));
-
-        window.display();
+        if (greedyScore > 0)
+        {
+            util::drawRectangleShape(window, greedyScoreRect, true, cellToColor(Content::Greedy));
+        }
     }
 
     void Drawing::setup(sf::RenderWindow & window)

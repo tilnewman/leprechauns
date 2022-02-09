@@ -19,12 +19,19 @@ namespace leprechauns
             sf::RenderWindow & window,
             const Board_t & board,
             const int lazyScore,
-            const int greedyScore);
+            const int greedyScore) const;
 
         void setup(sf::RenderWindow & window);
         int cellCount() const { return m_cellCount; }
         const sf::Vector2f cellSize() const { return { m_cellLength, m_cellLength }; }
         const sf::Vector2f cellWindowPosition(const Position_t & pos) const;
+
+      private:
+        void drawGrid(sf::RenderWindow & window) const;
+        void drawPieces(sf::RenderWindow & window, const Board_t & board) const;
+
+        void drawScoreBars(
+            sf::RenderWindow & window, const int lazyScore, const int greedyScore) const;
 
       private:
         sf::Color m_backgroundColor;
